@@ -1,0 +1,16 @@
+{
+  "name": "prevent-score",
+  "version": "1.0.0",
+  "description": "Calculadora de risco cardiovascular PREVENT (AHA 2024) em arquivo HTML unico, validada contra a calculadora oficial da AHA.",
+  "type": "commonjs",
+  "scripts": {
+    "validate": "node validation/validate.js 60"
+  },
+  "keywords": ["prevent", "cardiovascular-risk", "ascvd", "aha", "cardiology", "ckd-epi"],
+  "homepage": "https://github.com/Salomao0569/Prevent-Score",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Salomao0569/Prevent-Score.git"
+  },
+  "license": "MIT"
+}

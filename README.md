@@ -47,6 +47,24 @@ A calculadora foi verificada de forma exaustiva contra a **calculadora oficial d
 - **Coeficientes conferidos bit a bit** contra o material suplementar do artigo (2.140 coeficientes, incluindo DAC e AVC)
 - Conversor **CKD-EPI 2021** validado ponta a ponta
 
+### Rodar a validação você mesmo
+
+Requer [Node.js](https://nodejs.org) 18+ e internet (não precisa de `npm install`):
+
+```bash
+node validation/validate.js 60      # 60 pacientes aleatórios vs backend oficial da AHA
+# ou:  npm run validate
+```
+
+Saída esperada: `✅ App idêntico à calculadora oficial da AHA`. Detalhes em [`validation/`](validation/).
+
+## 🤖 Amigável para agentes de IA
+
+Este repositório é preparado para contribuições assistidas por IA (Claude Code, Cursor, Copilot, etc.):
+
+- **[`AGENTS.md`](AGENTS.md)** — instruções que agentes de IA leem automaticamente: arquitetura, onde está cada parte do cálculo e a **regra de ouro** (os resultados devem permanecer idênticos aos da AHA).
+- **[`validation/`](validation/)** — harness executável que qualquer IA pode rodar para **verificar a própria mudança** contra a calculadora oficial da AHA, antes de abrir um PR.
+
 ## 📚 Referência científica
 
 > Khan SS, Matsushita K, Sang Y, et al. **Development and Validation of the American Heart Association's PREVENT Equations.** *Circulation.* 2024;149(6):430–449. [doi:10.1161/CIRCULATIONAHA.123.067626](https://doi.org/10.1161/CIRCULATIONAHA.123.067626)
