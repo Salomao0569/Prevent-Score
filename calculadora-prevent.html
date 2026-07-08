@@ -1,0 +1,1795 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculadora PREVENT — Risco Cardiovascular (AHA)</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+  /* Design System & Theme Tokens */
+  :root {
+    --bg: #F0F4F8;
+    --surface: #FFFFFF;
+    --surface-hover: #F8FAFC;
+    --surface-alt: #F1F5F9;
+    --surface-card: #FFFFFF;
+    --border: #E2E8F0;
+    --border-light: #F1F5F9;
+    --border-focus: #0FA3A3;
+    
+    --text-main: #0F172A;
+    --text-secondary: #334155;
+    --text-muted: #64748B;
+    --text-light: #94A3B8;
+    
+    --accent: #0FA3A3;
+    --accent-glow: rgba(15, 163, 163, 0.25);
+    --accent-dark: #0B7F7F;
+    --accent-light: rgba(15, 163, 163, 0.1);
+    --accent-subtle: #E6F6F6;
+    
+    --header-bg: linear-gradient(135deg, #0A192F 0%, #112240 50%, #0F2E4D 100%);
+    --header-text: #FFFFFF;
+    
+    /* Risk Categories */
+    --r-low: #10B981;
+    --r-low-bg: rgba(16, 185, 129, 0.12);
+    --r-bord: #F59E0B;
+    --r-bord-bg: rgba(245, 158, 11, 0.12);
+    --r-int: #F97316;
+    --r-int-bg: rgba(249, 115, 22, 0.12);
+    --r-high: #EF4444;
+    --r-high-bg: rgba(239, 68, 68, 0.12);
+    
+    --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.04), 0 1px 2px rgba(15, 23, 42, 0.02);
+    --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.06), 0 2px 4px -2px rgba(15, 23, 42, 0.04);
+    --shadow-lg: 0 10px 25px -3px rgba(15, 23, 42, 0.08), 0 4px 6px -4px rgba(15, 23, 42, 0.03);
+    --shadow-xl: 0 20px 35px -5px rgba(15, 23, 42, 0.1), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+    
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 20px;
+    --transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  [data-theme="dark"] {
+    --bg: #0A1118;
+    --surface: #121E2C;
+    --surface-hover: #172638;
+    --surface-alt: #0D1620;
+    --surface-card: #121E2C;
+    --border: #203146;
+    --border-light: #182535;
+    --border-focus: #00D2C4;
+    
+    --text-main: #F8FAFC;
+    --text-secondary: #CBD5E1;
+    --text-muted: #94A3B8;
+    --text-light: #64748B;
+    
+    --accent: #00D2C4;
+    --accent-glow: rgba(0, 210, 196, 0.35);
+    --accent-dark: #00A89C;
+    --accent-light: rgba(0, 210, 196, 0.12);
+    --accent-subtle: #142834;
+    
+    --header-bg: linear-gradient(135deg, #050B11 0%, #0A1622 50%, #0F2336 100%);
+    
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+    --shadow-lg: 0 10px 25px -3px rgba(0, 0, 0, 0.6);
+    --shadow-xl: 0 20px 35px -5px rgba(0, 0, 0, 0.7);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  html, body {
+    background-color: var(--bg);
+    color: var(--text-main);
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    min-height: 100vh;
+  }
+
+  /* Utility & Layout */
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+  
+  .grid {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 28px;
+    margin-top: -36px;
+    position: relative;
+    z-index: 10;
+    padding-bottom: 64px;
+  }
+  
+  @media (max-width: 960px) {
+    .grid { grid-template-columns: 1fr; gap: 24px; margin-top: -24px; }
+  }
+
+  /* Header & ECG Animation */
+  header {
+    background: var(--header-bg);
+    color: var(--header-text);
+    position: relative;
+    overflow: hidden;
+    padding: 36px 0 68px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: 
+      radial-gradient(circle at 20% 50%, rgba(15, 163, 163, 0.15) 0%, transparent 50%),
+      radial-gradient(circle at 80% 30%, rgba(0, 210, 196, 0.1) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  .ecg-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    opacity: 0.35;
+    display: flex;
+    align-items: center;
+    pointer-events: none;
+  }
+
+  .ecg-bg svg {
+    width: 100%;
+    height: 140px;
+  }
+
+  .ecg-bg path {
+    fill: none;
+    stroke: #00D2C4;
+    stroke-width: 2.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    filter: drop-shadow(0 0 8px rgba(0, 210, 196, 0.8));
+    stroke-dasharray: 1400;
+    stroke-dashoffset: 1400;
+    animation: ecg-trace 5s ease-out infinite;
+  }
+
+  @keyframes ecg-trace {
+    0% { stroke-dashoffset: 1400; opacity: 0.2; }
+    30% { opacity: 1; }
+    80% { stroke-dashoffset: 0; opacity: 0.8; }
+    100% { stroke-dashoffset: 0; opacity: 0; }
+  }
+
+  .header-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+
+  .brand-title {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+
+  .brand-title h1 {
+    font-weight: 800;
+    font-size: 30px;
+    letter-spacing: -0.02em;
+    color: #FFFFFF;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  }
+
+  .badge-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #00D2C4;
+    background: rgba(0, 210, 196, 0.12);
+    border: 1px solid rgba(0, 210, 196, 0.35);
+    padding: 5px 10px;
+    border-radius: 20px;
+    box-shadow: 0 0 12px rgba(0, 210, 196, 0.15);
+  }
+
+  header p.subtitle {
+    margin: 10px 0 0;
+    color: #94A3B8;
+    max-width: 68ch;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .btn-icon, .btn-action {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #FFFFFF;
+    padding: 10px 16px;
+    border-radius: var(--radius-md);
+    font-family: inherit;
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: var(--transition);
+    backdrop-filter: blur(8px);
+  }
+
+  .btn-icon:hover, .btn-action:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-1px);
+  }
+
+  .btn-action.primary {
+    background: var(--accent);
+    color: #0F172A;
+    border-color: var(--accent);
+    font-weight: 700;
+    box-shadow: 0 0 15px var(--accent-glow);
+  }
+
+  .btn-action.primary:hover {
+    background: #14E2D5;
+    box-shadow: 0 0 22px var(--accent-glow);
+  }
+
+  /* Cards & Sections */
+  .card {
+    background: var(--surface-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-lg);
+    transition: var(--transition);
+    overflow: hidden;
+  }
+
+  .card-header {
+    padding: 24px 28px 18px;
+    border-bottom: 1px solid var(--border-light);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--surface-alt);
+  }
+
+  .section-title {
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-title .step-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    color: #FFFFFF;
+    background: var(--accent);
+    width: 26px;
+    height: 26px;
+    border-radius: 8px;
+    display: grid;
+    place-items: center;
+    box-shadow: 0 2px 8px var(--accent-glow);
+  }
+
+  .card-body {
+    padding: 28px;
+  }
+
+  .section-sub {
+    color: var(--text-muted);
+    font-size: 13.5px;
+    margin-bottom: 24px;
+  }
+
+  /* Form Elements */
+  .form-group-title {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent-dark);
+    margin: 20px 0 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .form-group-title:first-child { margin-top: 0; }
+  
+  .form-group-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border-light);
+  }
+
+  .fields-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+  }
+  
+  .fields-grid.opt { grid-template-columns: 1fr 1fr; }
+  
+  @media (max-width: 600px) {
+    .fields-grid, .fields-grid.opt { grid-template-columns: 1fr; }
+  }
+
+  .field-col {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+
+  .field-col.wide { grid-column: 1 / -1; }
+
+  label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px;
+  }
+
+  label .range-hint {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-light);
+  }
+
+  .input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .input-wrapper input[type="text"],
+  .input-wrapper input[type="number"],
+  .input-wrapper select {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-main);
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 11px 14px;
+    width: 100%;
+    transition: var(--transition);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .input-wrapper input:focus,
+  .input-wrapper select:focus {
+    outline: none;
+    border-color: var(--accent);
+    background: var(--surface-card);
+    box-shadow: 0 0 0 3px var(--accent-light);
+  }
+
+  .input-wrapper .unit-badge {
+    position: absolute;
+    right: 12px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    pointer-events: none;
+    background: var(--surface-alt);
+    padding: 2px 8px;
+    border-radius: 6px;
+    border: 1px solid var(--border-light);
+  }
+
+  input.warn {
+    border-color: var(--r-int) !important;
+    background-color: rgba(249, 115, 22, 0.04) !important;
+    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15) !important;
+  }
+
+  /* Segmented Controls */
+  .segmented-control {
+    display: flex;
+    background: var(--surface-alt);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 4px;
+    gap: 4px;
+  }
+
+  .segmented-control button {
+    flex: 1;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 13.5px;
+    font-weight: 600;
+    padding: 9px 12px;
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .segmented-control button:hover {
+    color: var(--text-main);
+  }
+
+  .segmented-control button[aria-pressed="true"] {
+    background: var(--surface-card);
+    color: var(--text-main);
+    box-shadow: var(--shadow-md);
+    font-weight: 700;
+    border: 1px solid var(--border-light);
+  }
+
+  /* Toggles / Checkboxes */
+  .toggles-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 14px;
+  }
+  
+  @media (max-width: 580px) {
+    .toggles-grid { grid-template-columns: 1fr; }
+  }
+
+  .toggle-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 1.5px solid var(--border);
+    background: var(--surface);
+    border-radius: var(--radius-md);
+    padding: 12px 14px;
+    cursor: pointer;
+    user-select: none;
+    transition: var(--transition);
+  }
+
+  .toggle-card:hover {
+    border-color: var(--text-muted);
+    background: var(--surface-hover);
+  }
+
+  .toggle-card.active {
+    border-color: var(--accent);
+    background: var(--accent-light);
+  }
+
+  .toggle-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
+
+  .toggle-card.active .toggle-label {
+    color: var(--text-main);
+    font-weight: 700;
+  }
+
+  .toggle-icon {
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    display: grid;
+    place-items: center;
+    background: var(--surface-alt);
+    color: var(--text-muted);
+    transition: var(--transition);
+  }
+
+  .toggle-card.active .toggle-icon {
+    background: var(--accent);
+    color: #FFFFFF;
+  }
+
+  .switch {
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 22px;
+    flex-shrink: 0;
+  }
+
+  .switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    inset: 0;
+    background-color: var(--border);
+    transition: .25s;
+    border-radius: 22px;
+  }
+
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .25s;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  }
+
+  input:checked + .slider {
+    background-color: var(--accent);
+  }
+
+  input:checked + .slider:before {
+    transform: translateX(18px);
+  }
+
+  /* Creatinine Popover / Expandable */
+  .egfr-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  
+  .egfr-actions .input-wrapper { flex: 1; }
+
+  .btn-mini {
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--accent-dark);
+    background: var(--accent-light);
+    border: 1.5px solid rgba(15, 163, 163, 0.3);
+    border-radius: var(--radius-md);
+    padding: 11px 14px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .btn-mini:hover {
+    background: rgba(15, 163, 163, 0.18);
+    transform: translateY(-1px);
+  }
+
+  .cr-box {
+    background: var(--surface-alt);
+    border: 1px dashed var(--border);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    margin-top: 10px;
+    animation: fadeIn 0.2s ease-out;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .hint-text {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  /* Optional Refinements Accordion */
+  details.opt-accordion {
+    margin-top: 24px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background: var(--surface);
+    transition: var(--transition);
+  }
+
+  details[open].opt-accordion {
+    border-color: var(--accent);
+    box-shadow: var(--shadow-md);
+  }
+
+  summary {
+    cursor: pointer;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--text-main);
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    background: var(--surface-alt);
+    user-select: none;
+  }
+
+  summary::-webkit-details-marker { display: none; }
+
+  summary .summary-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  summary .chevron {
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    color: var(--text-muted);
+  }
+
+  details[open] summary .chevron {
+    transform: rotate(180deg);
+    color: var(--accent);
+  }
+
+  .opt-content {
+    padding: 20px;
+    border-top: 1px solid var(--border-light);
+  }
+
+  /* Results Dashboard (Sticky Right Column) */
+  .results-column {
+    position: sticky;
+    top: 24px;
+    height: fit-content;
+  }
+
+  .model-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 4px 12px;
+    border-radius: 20px;
+  }
+
+  .model-badge b { color: var(--accent-dark); }
+
+  .empty-state {
+    padding: 56px 28px;
+    text-align: center;
+    color: var(--text-muted);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .empty-state .icon-circle {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: var(--surface-alt);
+    display: grid;
+    place-items: center;
+    color: var(--text-light);
+    border: 1px dashed var(--border);
+  }
+
+  .empty-state p {
+    max-width: 32ch;
+    font-size: 14px;
+  }
+
+  /* Hero Result Display */
+  .hero-readout {
+    padding: 28px 28px 20px;
+    background: linear-gradient(180deg, var(--surface-alt) 0%, var(--surface-card) 100%);
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  .hero-label-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  .hero-label {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+  }
+
+  .risk-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12.5px;
+    font-weight: 700;
+    padding: 5px 12px;
+    border-radius: 20px;
+    transition: var(--transition);
+  }
+
+  .risk-pill .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    animation: pulse-dot 2s infinite;
+  }
+
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.3); }
+  }
+
+  .hero-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 56px;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    margin: 12px 0;
+  }
+
+  /* Visual Risk Gauge Bar */
+  .gauge-container {
+    margin-top: 20px;
+  }
+
+  .gauge-track {
+    height: 10px;
+    border-radius: 10px;
+    background: linear-gradient(90deg, 
+      var(--r-low) 0%, var(--r-low) 10%, 
+      var(--r-bord) 10%, var(--r-bord) 16.6%, 
+      var(--r-int) 16.6%, var(--r-int) 33.3%, 
+      var(--r-high) 33.3%, var(--r-high) 100%);
+    position: relative;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.15);
+  }
+
+  .gauge-marker {
+    position: absolute;
+    top: 50%;
+    width: 20px;
+    height: 20px;
+    background: #FFFFFF;
+    border: 3.5px solid var(--text-main);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    transition: left 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .gauge-labels {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-top: 8px;
+  }
+
+  .gauge-caption {
+    font-size: 10.5px;
+    color: var(--text-light);
+    text-align: center;
+    margin-top: 9px;
+    letter-spacing: 0.02em;
+  }
+
+  /* Risk Trajectory — signature dual-horizon readout */
+  .horizon-readout {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 14px;
+    margin: 16px 0 6px;
+  }
+
+  .horizon {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+  }
+
+  .horizon.secondary {
+    align-items: flex-end;
+    text-align: right;
+  }
+
+  .horizon-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    letter-spacing: -0.035em;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .horizon.primary .horizon-num { font-size: 44px; }
+
+  .horizon.secondary .horizon-num {
+    font-size: 25px;
+    color: var(--text-secondary);
+  }
+
+  .horizon.secondary.na .horizon-num {
+    color: var(--text-light);
+    font-size: 30px;
+    font-weight: 500;
+  }
+
+  .horizon-lbl {
+    font-size: 11.5px;
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+
+  .horizon-lbl b { color: var(--text-secondary); font-weight: 700; }
+  .horizon-lbl small { font-size: 10px; color: var(--text-light); }
+
+  .traj-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    min-width: 0;
+  }
+
+  .traj-wrap svg {
+    height: 58px;
+    width: auto;
+    max-width: 100%;
+    display: block;
+    overflow: visible;
+  }
+
+  .traj-wrap svg .traj-line {
+    stroke-dasharray: 220;
+    stroke-dashoffset: 220;
+    animation: traj-draw 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  }
+
+  @keyframes traj-draw {
+    to { stroke-dashoffset: 0; }
+  }
+
+  .traj-axis {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 132px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    font-weight: 600;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  @media (max-width: 440px) {
+    .horizon.primary .horizon-num { font-size: 36px; }
+    .horizon.secondary .horizon-num { font-size: 21px; }
+    .horizon-readout { gap: 10px; }
+  }
+
+  /* Outcomes Comparison Table */
+  .outcomes-section {
+    padding: 24px 28px;
+  }
+
+  .outcomes-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-secondary);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .outcomes-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .outcome-card {
+    background: var(--surface-alt);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-md);
+    padding: 14px 18px;
+    transition: var(--transition);
+  }
+
+  .outcome-card:hover {
+    border-color: var(--border);
+    transform: translateX(2px);
+  }
+
+  .outcome-card.primary-card {
+    background: var(--accent-light);
+    border-color: rgba(15, 163, 163, 0.3);
+  }
+
+  .outcome-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  .outcome-name {
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .outcome-values {
+    display: flex;
+    gap: 16px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .val-box {
+    text-align: right;
+  }
+
+  .val-box .time-lbl {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 10.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    display: block;
+  }
+
+  .val-box .time-val {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-main);
+  }
+
+  .val-box.dim .time-val {
+    color: var(--text-light);
+    font-weight: 500;
+  }
+
+  /* Mini Progress bar inside outcome cards */
+  .outcome-bar-bg {
+    height: 4px;
+    background: var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    width: 100%;
+  }
+
+  .outcome-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  /* Footer & Warnbox */
+  .warnbox {
+    margin: 16px 28px 0;
+    background: rgba(249, 115, 22, 0.1);
+    border: 1px solid rgba(249, 115, 22, 0.35);
+    border-radius: var(--radius-md);
+    padding: 12px 16px;
+    font-size: 12.5px;
+    color: #C2410C;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    line-height: 1.5;
+  }
+
+  [data-theme="dark"] .warnbox {
+    color: #FDBA74;
+  }
+
+  .card-footer-notes {
+    padding: 18px 28px;
+    background: var(--surface-alt);
+    border-top: 1px solid var(--border-light);
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  footer.page-footer {
+    max-width: 1200px;
+    margin: 36px auto 0;
+    padding: 0 24px;
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.7;
+    text-align: center;
+  }
+
+  footer.page-footer b { color: var(--text-secondary); }
+
+  /* Toast Notification */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--text-main);
+    color: var(--bg);
+    padding: 12px 20px;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    font-size: 13.5px;
+    box-shadow: var(--shadow-xl);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    z-index: 1000;
+    opacity: 0;
+    transform: translateY(16px);
+    pointer-events: none;
+    transition: var(--transition);
+  }
+
+  .toast.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Print Styles */
+  @media print {
+    body { background: #fff; color: #000; padding: 0; }
+    header, .header-actions, .btn-mini, .toggles-grid, details.opt-accordion { display: none !important; }
+    .grid { grid-template-columns: 1fr; gap: 16px; margin-top: 0; }
+    .card { box-shadow: none; border: 1px solid #ccc; }
+    .results-column { position: static; }
+    .hero-value { font-size: 40px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="ecg-bg" aria-hidden="true">
+    <svg viewBox="0 0 1080 160" preserveAspectRatio="none">
+      <path d="M0,80 L180,80 L210,80 L224,52 L238,80 L300,80 L318,80 L332,110 L346,20 L360,132 L374,80 L392,80 L560,80 L590,80 L604,58 L618,80 L700,80 L720,80 L734,110 L748,24 L762,128 L776,80 L800,80 L1080,80"/>
+    </svg>
+  </div>
+  <div class="container">
+    <div class="header-content">
+      <div>
+        <div class="brand-title">
+          <h1>Calculadora PREVENT&trade;</h1>
+          <span class="badge-tag">AHA PREVENT &middot; PT-BR</span>
+        </div>
+        <p class="subtitle">
+          Estimativa de risco cardiovascular em 10 e 30 anos (DCV total, ASCVD e insuficiência cardíaca) pelas equações oficiais da American Heart Association para adultos de 30 a 79 anos.
+        </p>
+      </div>
+      <div class="header-actions">
+        <button type="button" class="btn-icon" id="themeToggleBtn" title="Alternar tema Escuro/Claro">
+          <svg id="themeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+          <span id="themeText">Escuro</span>
+        </button>
+        <button type="button" class="btn-action" id="resetBtn" title="Limpar todos os campos">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+          Limpar
+        </button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+  <div class="grid">
+    
+    <!-- LEFT COLUMN: PATIENT INPUTS -->
+    <div class="card">
+      <div class="card-header">
+        <div class="section-title">
+          <span class="step-num">1</span>
+          Parâmetros Biométricos & Clínicos
+        </div>
+        <span style="font-size: 12px; font-weight: 600; color: var(--text-muted);">Campos Obrigatórios *</span>
+      </div>
+      
+      <div class="card-body">
+        
+        <!-- Grupo 1: Biometria Básica -->
+        <div class="form-group-title">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Biometria & Demografia
+        </div>
+        
+        <div class="fields-grid">
+          <div class="field-col">
+            <label for="age">Idade * <span class="range-hint">30–79 anos</span></label>
+            <div class="input-wrapper">
+              <input type="number" id="age" min="30" max="79" step="1" placeholder="ex.: 58" inputmode="numeric">
+              <span class="unit-badge">anos</span>
+            </div>
+          </div>
+          
+          <div class="field-col">
+            <label>Sexo Biológico *</label>
+            <div class="segmented-control" id="sex">
+              <button type="button" data-v="female" aria-pressed="false">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="10" r="6"/><path d="M12 16v6"/><path d="M9 19h6"/></svg>
+                Feminino
+              </button>
+              <button type="button" data-v="male" aria-pressed="false">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="10" cy="14" r="6"/><path d="M14 10l6-6"/><path d="M15 4h5v5"/></svg>
+                Masculino
+              </button>
+            </div>
+          </div>
+
+          <div class="field-col wide">
+            <label for="bmi">Índice de Massa Corporal (IMC) * <span class="range-hint">18.5–39.9 kg/m²</span></label>
+            <div class="input-wrapper">
+              <input type="number" id="bmi" min="18.5" max="39.9" step="0.1" placeholder="ex.: 26.5" inputmode="decimal">
+              <span class="unit-badge">kg/m²</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Grupo 2: Hemodinâmica e Renal -->
+        <div class="form-group-title" style="margin-top: 26px;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+          Hemodinâmica & Função Renal
+        </div>
+
+        <div class="fields-grid">
+          <div class="field-col">
+            <label for="sbp">PA Sistólica * <span class="range-hint">90–200 mmHg</span></label>
+            <div class="input-wrapper">
+              <input type="number" id="sbp" min="90" max="200" step="1" placeholder="ex.: 130" inputmode="numeric">
+              <span class="unit-badge">mmHg</span>
+            </div>
+          </div>
+
+          <div class="field-col">
+            <label for="egfr">TFG Estimada * <span class="range-hint">15–140 mL/min</span></label>
+            <div class="egfr-actions">
+              <div class="input-wrapper">
+                <input type="number" id="egfr" min="15" max="140" step="1" placeholder="ex.: 85" inputmode="numeric">
+                <span class="unit-badge">mL/min</span>
+              </div>
+              <button class="btn-mini" id="egfrBtn" type="button" title="Calcular TFG pela creatinina sérica">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="16" y1="14" x2="16" y2="14"/><line x1="12" y1="14" x2="12" y2="14"/><line x1="8" y1="14" x2="8" y2="14"/></svg>
+                + Creatinina
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Popover Creatinina -->
+        <div id="crBox" style="display:none;" class="cr-box">
+          <div class="fields-grid">
+            <div class="field-col">
+              <label for="cr">Creatinina Sérica <span class="range-hint">0.1–15 mg/dL</span></label>
+              <div class="input-wrapper">
+                <input type="number" id="cr" min="0.1" step="0.01" placeholder="ex.: 0.95" inputmode="decimal">
+                <span class="unit-badge">mg/dL</span>
+              </div>
+            </div>
+            <div class="field-col" style="justify-content: flex-end;">
+              <button class="btn-action primary" id="crApply" type="button" style="height: 44px; justify-content: center;">
+                Aplicar CKD-EPI 2021
+              </button>
+            </div>
+          </div>
+          <p class="hint-text">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+            Requer idade e sexo preenchidos acima para o cálculo automático.
+          </p>
+        </div>
+
+        <!-- Grupo 3: Perfil Lipídico -->
+        <div class="form-group-title" style="margin-top: 26px;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+          Perfil Lipídico
+        </div>
+
+        <div class="fields-grid">
+          <div class="field-col">
+            <label for="total_c">Colesterol Total * <span class="range-hint">130–320 mg/dL</span></label>
+            <div class="input-wrapper">
+              <input type="number" id="total_c" min="130" max="320" step="1" placeholder="ex.: 210" inputmode="numeric">
+              <span class="unit-badge">mg/dL</span>
+            </div>
+          </div>
+
+          <div class="field-col">
+            <label for="hdl_c">HDL-Colesterol * <span class="range-hint">20–100 mg/dL</span></label>
+            <div class="input-wrapper">
+              <input type="number" id="hdl_c" min="20" max="100" step="1" placeholder="ex.: 48" inputmode="numeric">
+              <span class="unit-badge">mg/dL</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Grupo 4: Condições Clínicas & Medicação -->
+        <div class="form-group-title" style="margin-top: 26px;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          Condições Clínicas & Tratamentos Atuais
+        </div>
+
+        <div class="toggles-grid">
+          <label class="toggle-card" id="dmCard">
+            <div class="toggle-label">
+              <div class="toggle-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg></div>
+              Diabetes Mellitus
+            </div>
+            <div class="switch">
+              <input type="checkbox" id="dm">
+              <span class="slider"></span>
+            </div>
+          </label>
+
+          <label class="toggle-card" id="smCard">
+            <div class="toggle-label">
+              <div class="toggle-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 12H2v4h16zM22 12v4M18 8c0-2.2 1.8-4 4-4"/></svg></div>
+              Tabagismo Atual
+            </div>
+            <div class="switch">
+              <input type="checkbox" id="smoking">
+              <span class="slider"></span>
+            </div>
+          </label>
+
+          <label class="toggle-card" id="bpCard">
+            <div class="toggle-label">
+              <div class="toggle-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10.5 20.5l10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7z"/><path d="m8.5 8.5 7 7"/></svg></div>
+              Anti-hipertensivo
+            </div>
+            <div class="switch">
+              <input type="checkbox" id="bp_tx">
+              <span class="slider"></span>
+            </div>
+          </label>
+
+          <label class="toggle-card" id="stCard">
+            <div class="toggle-label">
+              <div class="toggle-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+              Uso de Estatina
+            </div>
+            <div class="switch">
+              <input type="checkbox" id="statin">
+              <span class="slider"></span>
+            </div>
+          </label>
+        </div>
+
+        <!-- Refinamentos Opcionais -->
+        <details class="opt-accordion">
+          <summary>
+            <div class="summary-left">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.2"><path d="M12 20v-6M6 20V10M18 20V4"/></svg>
+              <span>Refinamentos Opcionais (HbA1c & RAC Urinária)</span>
+            </div>
+            <svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </summary>
+          <div class="opt-content">
+            <p class="section-sub" style="margin-bottom: 16px;">
+              Ao informar HbA1c e/ou relação albumina/creatinina (RAC), a calculadora seleciona automaticamente o modelo estendido correspondente da AHA. A versão oficial atual também permite personalização por Zip Code/SDI; nesta versão local, esse preditor permanece como não informado.
+            </p>
+            <div class="fields-grid opt">
+              <div class="field-col">
+                <label for="hba1c">Hemoglobina Glicada <span class="range-hint">3–15%</span></label>
+                <div class="input-wrapper">
+                  <input type="number" id="hba1c" min="3" max="15" step="0.1" placeholder="ex.: 5.8" inputmode="decimal">
+                  <span class="unit-badge">%</span>
+                </div>
+              </div>
+
+              <div class="field-col">
+                <label for="uacr">RAC Urinária <span class="range-hint">0.1–25000 mg/g</span></label>
+                <div class="input-wrapper">
+                  <input type="number" id="uacr" min="0.1" max="25000" step="0.1" placeholder="ex.: 15.0" inputmode="decimal">
+                  <span class="unit-badge">mg/g</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </details>
+
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN: RESULTS DASHBOARD -->
+    <div class="results-column">
+      <div class="card" id="resCard">
+        <div class="card-header">
+          <div class="section-title">
+            <span class="step-num" style="background: var(--text-main); color: var(--bg);">2</span>
+            Monitor Clínico de Risco
+          </div>
+          <div class="model-badge" id="modelTag">modelo: <b>—</b></div>
+        </div>
+
+        <div id="resBody">
+          <!-- Empty State by default -->
+          <div class="empty-state">
+            <div class="icon-circle">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+            </div>
+            <div>
+              <h3 style="font-weight: 700; color: var(--text-main); margin-bottom: 6px;">Aguardando Parâmetros</h3>
+              <p>Preencha os dados biométricos e de colesterol obrigatórios ao lado para gerar o perfil preditivo de risco em 10 e 30 anos.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-footer-notes">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
+            <span style="font-weight: 700; color: var(--text-secondary);">Ações de Prontuário</span>
+            <div style="display: flex; gap: 8px;">
+              <button type="button" class="btn-action" id="copyEhrBtn" style="padding: 7px 12px; font-size: 12px; background: var(--surface); color: var(--text-main); border-color: var(--border);">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                Copiar Resumo
+              </button>
+              <button type="button" class="btn-action" id="printBtn" style="padding: 7px 12px; font-size: 12px; background: var(--surface); color: var(--text-main); border-color: var(--border);">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                Imprimir
+              </button>
+            </div>
+          </div>
+          <b>DCV Total</b> = ASCVD + Insuficiência Cardíaca. <b>ASCVD</b> = Infarto não fatal, morte coronariana e AVC fatal ou não fatal. Risco de 30 anos reportado apenas entre 30 e 59 anos (faixa validada).
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <footer class="page-footer">
+    <p><b>Referência Científica:</b> Khan SS, Matsushita K, Sang Y, et&nbsp;al. Development and Validation of the American Heart Association's PREVENT Equations. <i>Circulation.</i> 2024;149(6):430–449. Coeficientes matemáticos base compatíveis com o calculador oficial da AHA para CVD/ASCVD/HF quando Zip Code/SDI não é informado.</p>
+    <p><b>Uso Clínico:</b> Ferramenta de apoio à decisão para prevenção primária (adultos de 30–79 anos sem DCV prévia). Não substitui o julgamento clínico individualizado. Valores fora das faixas validadas são limitados ao extremo permitido com alerta visual.</p>
+  </footer>
+</div>
+
+<!-- Toast Feedback -->
+<div id="toast" class="toast">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+  <span id="toastMsg">Resumo copiado com sucesso!</span>
+</div>
+
+<script>
+window.addEventListener('error', function(ev){
+  try{
+    var b=document.getElementById('resBody');
+    if(b) b.innerHTML='<div class="empty-state" style="color:#EF4444"><b>Erro ao executar cálculo:</b><br>'+
+      (ev.message||ev.error||'Desconhecido')+'</div>';
+  }catch(e){}
+});
+
+const COEF = {"base_10yr":{"female_total_cvd":[0.7939329,0.0305239,-0.1606857,-0.2394003,0.3600781,0.8667604,0.5360739,0.0,0.0,0.6045917,0.0433769,0.3151672,-0.1477655,-0.0663612,0.1197879,-0.0819715,0.0306769,-0.0946348,-0.27057,-0.078715,0.0,-0.1637806,-3.307728],"male_total_cvd":[0.7688528,0.0736174,-0.0954431,-0.4347345,0.3362658,0.7692857,0.4386871,0.0,0.0,0.5378979,0.0164827,0.288879,-0.1337349,-0.0475924,0.150273,-0.0517874,0.0191169,-0.1049477,-0.2251948,-0.0895067,0.0,-0.1543702,-3.031168],"female_ascvd":[0.719883,0.1176967,-0.151185,-0.0835358,0.3592852,0.8348585,0.4831078,0.0,0.0,0.4864619,0.0397779,0.2265309,-0.0592374,-0.0395762,0.0844423,-0.0567839,0.0325692,-0.1035985,-0.2417542,-0.0791142,0.0,-0.1671492,-3.819975],"male_ascvd":[0.7099847,0.1658663,-0.1144285,-0.2837212,0.3239977,0.7189597,0.3956973,0.0,0.0,0.3690075,0.0203619,0.2036522,-0.0865581,-0.0322916,0.114563,-0.0300005,0.0232747,-0.0927024,-0.2018525,-0.0970527,0.0,-0.1217081,-3.500655],"female_heart_failure":[0.8998235,0.0,0.0,-0.4559771,0.3576505,1.038346,0.583916,-0.0072294,0.2997706,0.7451638,0.0557087,0.3534442,0.0,-0.0981511,0.0,0.0,0.0,-0.0946663,-0.3581041,-0.1159453,-0.003878,-0.1884289,-4.310409],"male_heart_failure":[0.8972642,0.0,0.0,-0.6811466,0.3634461,0.923776,0.5023736,-0.0485841,0.3726929,0.6926917,0.0251827,0.2980922,0.0,-0.0497731,0.0,0.0,0.0,-0.1289201,-0.3040924,-0.1401688,0.0068126,-0.1797778,-3.946391],"female_chd":[0.7587146,0.1810949,-0.2014507,-0.0881827,0.3547731,0.9045358,0.5410917,0.0,0.0,0.5198725,0.0325935,0.2010642,-0.036195,-0.0891238,0.0750716,-0.0683256,0.0484755,-0.0898086,-0.2569041,-0.0786607,0.0,-0.1597513,-4.608751],"male_chd":[0.7423283,0.2572109,-0.1820374,-0.3174515,0.312778,0.7485249,0.3912047,0.0,0.0,0.376487,0.0193687,0.1588199,-0.0494555,-0.0577851,0.0809765,-0.0517872,0.0489033,-0.0850404,-0.2107552,-0.1206397,0.0,-0.07795,-4.156753],"female_stroke":[0.6907849,0.0534279,-0.1055109,-0.113078,0.3665217,0.8013721,0.4187039,0.0,0.0,0.4539767,0.0515087,0.2494624,-0.0798829,-0.0079039,0.0833101,-0.0409242,0.016994,-0.1191213,-0.2480549,-0.0998063,0.0,-0.1759075,-4.409199],"male_stroke":[0.722513,0.0263348,-0.0248959,-0.268104,0.3474634,0.684699,0.3874844,0.0,0.0,0.3877827,0.0201965,0.232963,-0.1178935,0.0120926,0.155739,0.0141928,-0.0111745,-0.1155391,-0.2123743,-0.0824133,0.0,-0.180789,-4.20881]},"uacr_10yr":{"female_total_cvd":[0.7969249,0.0256635,-0.1588107,-0.2255701,0.3396649,0.8047515,0.5285338,0.0,0.0,0.4803511,0.0434472,0.2985207,-0.1497787,-0.0742889,0.106756,-0.0778126,0.0306768,-0.0907168,-0.2705122,-0.0830564,0.0,-0.1389249,0.1793037,0.0132073,-3.738341],"male_total_cvd":[0.7768655,0.0659949,-0.0951111,-0.420667,0.3120151,0.698521,0.4314669,0.0,0.0,0.3841364,0.009384,0.2676494,-0.1390966,-0.0579315,0.1383719,-0.0488332,0.0200406,-0.102454,-0.2236355,-0.089485,0.0,-0.1321848,0.1887974,0.0916979,-3.510705],"female_ascvd":[0.7201999,0.1135771,-0.1493506,-0.0726677,0.3436259,0.7773094,0.4746662,0.0,0.0,0.3824646,0.0394178,0.2125182,-0.0603046,-0.0466053,0.0733118,-0.0534262,0.0325689,-0.0999887,-0.2411762,-0.0826941,0.0,-0.1444737,0.1501217,0.0050257,-4.174614],"male_ascvd":[0.7141718,0.1602194,-0.1139086,-0.2719456,0.3058719,0.6600631,0.3884022,0.0,0.0,0.2466316,0.0151852,0.186167,-0.0894395,-0.0411884,0.1058212,-0.028089,0.0240427,-0.0912325,-0.2004894,-0.096936,0.0,-0.1022867,0.1510073,0.0556,-3.85146],"female_heart_failure":[0.9145975,0.0,0.0,-0.4441346,0.3260323,0.9611365,0.5755787,0.0008831,0.2988964,0.5915291,0.0556823,0.3314097,0.0,-0.1078596,0.0,0.0,0.0,-0.0875231,-0.356859,-0.1220248,-0.0053637,-0.1610389,0.2197281,0.0326667,-4.841506],"male_heart_failure":[0.9111795,0.0,0.0,-0.6693649,0.3290082,0.8377655,0.4978917,-0.042749,0.3624165,0.5075796,0.0137716,0.2739963,0.0,-0.0645712,0.0,0.0,0.0,-0.1230039,-0.3013297,-0.1410318,0.0021531,-0.1548018,0.2306299,0.1472194,-4.556907],"female_chd":[0.7614931,0.1765755,-0.1996513,-0.0760767,0.3374299,0.8515443,0.5327847,0.0,0.0,0.4067587,0.0325967,0.1879265,-0.036242,-0.0976864,0.0631608,-0.0644549,0.0488099,-0.0856819,-0.2559883,-0.0825615,0.0,-0.1357371,0.1588333,0.03215,-4.989932],"male_chd":[0.7502946,0.2509378,-0.1815561,-0.3062719,0.2951241,0.6940439,0.3853768,0.0,0.0,0.2541989,0.0141383,0.1436559,-0.051752,-0.0668907,0.072524,-0.0501194,0.0496393,-0.0834809,-0.2093613,-0.1194638,0.0,-0.0585638,0.1440077,0.0691246,-4.50564],"female_stroke":[0.6930839,0.0497817,-0.1036238,-0.1018981,0.3513877,0.7371897,0.4124697,0.0,0.0,0.3574419,0.0505453,0.2339584,-0.0828306,-0.0134372,0.073392,-0.0378598,0.0169872,-0.1157191,-0.2469561,-0.1014342,0.0,-0.155055,0.140267,-0.0282752,-4.722218],"male_stroke":[0.7318016,0.0213625,-0.025297,-0.2574602,0.3284184,0.6166399,0.3835512,0.0,0.0,0.2677033,0.0139698,0.213571,-0.1219907,0.0038137,0.1454254,0.0165197,-0.010184,-0.1131545,-0.2081075,-0.0804025,0.0,-0.1617206,0.1624239,0.0412377,-4.594023]},"hba1c_10yr":{"female_total_cvd":[0.7858178,0.0194438,-0.1521964,-0.2296681,0.3465777,0.5366241,0.5411682,0.0,0.0,0.5931898,0.0472458,0.3158567,-0.1535174,-0.0687752,0.1054746,-0.0761119,0.0307469,-0.0905966,-0.2241857,-0.080186,0.0,-0.1667286,0.1338348,0.1622409,-0.0142496,-3.306162],"male_total_cvd":[0.7699177,0.0605093,-0.0888525,-0.417713,0.3288657,0.4759471,0.4385663,0.0,0.0,0.5334616,0.0206431,0.2917524,-0.1383313,-0.0482622,0.1393796,-0.0463501,0.0205926,-0.1037717,-0.1737697,-0.0915839,0.0,-0.1637039,0.13159,0.1295185,-0.0128373,-3.040901],"female_ascvd":[0.7111831,0.106797,-0.1425745,-0.0736824,0.3480844,0.5112951,0.4880292,0.0,0.0,0.4754997,0.0438132,0.2259093,-0.0648872,-0.0437645,0.0697082,-0.0506382,0.0327475,-0.0996442,-0.1924338,-0.0803539,0.0,-0.1682586,0.1339055,0.1596461,0.0015678,-3.838746],"male_ascvd":[0.7064146,0.1532267,-0.1082166,-0.2675288,0.3173809,0.432604,0.3958842,0.0,0.0,0.3665014,0.0250243,0.2061158,-0.0899988,-0.0334959,0.1034168,-0.0255406,0.0247538,-0.0917441,-0.1499195,-0.098089,0.0,-0.1305231,0.1157161,0.1288303,-0.0010001,-3.51835],"female_heart_failure":[0.8997391,0.0,0.0,-0.4422749,0.3378691,0.681284,0.5886005,-0.0148657,0.2958374,0.73447,0.05926,0.3543475,0.0,-0.1002139,0.0,0.0,0.0,-0.0878765,-0.303684,-0.1178943,-0.008345,-0.1912183,0.1856442,0.1833083,-0.0143112,-4.288225],"male_heart_failure":[0.911787,0.0,0.0,-0.6568071,0.3524645,0.5849752,0.5014014,-0.0512352,0.365294,0.6892219,0.0292377,0.3038296,0.0,-0.0515032,0.0,0.0,0.0,-0.1262343,-0.2449514,-0.1392217,0.0009592,-0.1917105,0.1652857,0.1505859,-0.0113444,-3.961954],"female_chd":[0.7559415,0.1663933,-0.1905004,-0.0768509,0.339647,0.5632228,0.5478,0.0,0.0,0.5105085,0.0381344,0.2023093,-0.0425927,-0.0953791,0.0587372,-0.0607664,0.0485765,-0.0841698,-0.1986967,-0.0807069,0.0,-0.1610913,0.1832739,0.1755465,0.0268381,-4.667457],"male_chd":[0.7223642,0.2443591,-0.1755236,-0.3025745,0.3056892,0.4874841,0.3942456,0.0,0.0,0.3748008,0.0250407,0.1616182,-0.0513733,-0.059131,0.0710909,-0.0476587,0.0502694,-0.0838455,-0.1630679,-0.1220691,0.0,-0.0859505,0.1251064,0.1177006,0.0285438,-4.219654],"female_stroke":[0.6854957,0.043261,-0.0983793,-0.1017197,0.3565955,0.4609555,0.4198301,0.0,0.0,0.4436518,0.0544989,0.2493831,-0.0859775,-0.0114564,0.0689079,-0.036013,0.0171809,-0.115679,-0.2025816,-0.1003882,0.0,-0.1760082,0.0929695,0.1545054,-0.025509,-4.396448],"male_stroke":[0.7244468,0.0134286,-0.0204357,-0.2506963,0.3408562,0.35355,0.3854904,0.0,0.0,0.3869787,0.0237663,0.236159,-0.1241976,0.0095878,0.1424174,0.018922,-0.0093452,-0.1143576,-0.1559808,-0.0824194,0.0,-0.1890904,0.1076023,0.1408596,-0.0470943,-4.179346]},"full_10yr":{"female_total_cvd":[0.7716794,0.0062109,-0.1547756,-0.1933123,0.3071217,0.496753,0.466605,0.0,0.0,0.4780697,0.0529077,0.3034892,-0.1556524,-0.0667026,0.1061825,-0.0742271,0.0288245,-0.0875188,-0.2267102,-0.0676125,0.0,-0.1493231,0.1361989,0.2261596,0.1804508,0.1645922,0.0198413,0.1298513,0.1412555,-0.0031658,-3.860385],"male_total_cvd":[0.7847578,0.0534485,-0.0911282,-0.4921973,0.2972415,0.4527054,0.3726641,0.0,0.0,0.3886854,0.0081661,0.2508052,-0.1538484,-0.0474695,0.1415382,-0.0436455,0.0199549,-0.1022686,-0.1762507,-0.0715873,0.0,-0.1428668,0.0802431,0.275073,0.144759,0.1772853,0.1095674,0.1165698,0.1048297,-0.0230072,-3.631387],"female_ascvd":[0.7023067,0.0898765,-0.1407316,-0.0256648,0.314511,0.4799217,0.4062049,0.0,0.0,0.3847744,0.0495174,0.2133861,-0.0678552,-0.0451416,0.0788187,-0.0535985,0.0291762,-0.0961839,-0.2001466,-0.0586472,0.0,-0.1537791,0.1413965,0.228136,0.1588908,0.1371824,0.0061613,0.123192,0.1410572,0.005866,-4.291503],"male_ascvd":[0.7128741,0.1465201,-0.1125794,-0.3387216,0.2980252,0.399583,0.3379111,0.0,0.0,0.2582604,0.0147769,0.1686621,-0.1073619,-0.0381038,0.1034169,-0.0228755,0.0267453,-0.0897449,-0.1497464,-0.077206,0.0,-0.1198368,0.0651121,0.2676683,0.1388492,0.1375837,0.0652944,0.101282,0.1092726,-0.0112852,-3.969788],"female_heart_failure":[0.884209,0.0,0.0,-0.421474,0.3002919,0.6170359,0.5380269,-0.0191335,0.2764302,0.5975847,0.0654197,0.3313614,0.0,-0.1002304,0.0,0.0,0.0,-0.0845363,-0.2989062,-0.1111354,0.0008104,-0.1666635,0.1213034,0.2314147,0.1819138,0.1948135,0.0395368,0.176668,0.1614911,-0.0010583,-4.896524],"male_heart_failure":[0.9095703,0.0,0.0,-0.6765184,0.3111651,0.5535052,0.4326811,-0.0854286,0.3551736,0.5102245,0.015472,0.2570964,0.0,-0.0591177,0.0,0.0,0.0,-0.1219056,-0.2437577,-0.105363,0.0037907,-0.1660207,0.1106372,0.3371204,0.1694628,0.2164607,0.1702805,0.148297,0.1234088,-0.0234637,-4.663513],"female_chd":[0.7544208,0.1403589,-0.1954699,-0.0021814,0.3127753,0.523075,0.4594228,0.0,0.0,0.4173237,0.0385169,0.198164,-0.0557405,-0.0940465,0.0844888,-0.0630114,0.0473455,-0.0801956,-0.2002523,-0.0484742,0.0,-0.1455343,0.1651771,0.2276,0.1602508,0.1406282,0.032372,0.1656628,0.1586376,0.0266703,-5.131505],"male_chd":[0.7335852,0.2403104,-0.1822238,-0.414886,0.2880084,0.4937277,0.3326075,0.0,0.0,0.2586836,0.0124978,0.1132755,-0.0823542,-0.0718794,0.0765924,-0.0489011,0.0531464,-0.0813293,-0.1679294,-0.0927969,0.0,-0.0677064,0.0705264,0.2306082,0.094206,0.1354182,0.0759494,0.116195,0.0991112,0.0213677,-4.629874],"female_stroke":[0.6848394,0.0327248,-0.0957615,-0.07474,0.3237856,0.4441471,0.3636951,0.0,0.0,0.3629529,0.0603154,0.225342,-0.0885632,-0.0161592,0.0727068,-0.0389022,0.0141743,-0.1121459,-0.2089706,-0.0703397,0.0,-0.1605001,0.1064527,0.2095741,0.140274,0.1285363,-0.0243528,0.089734,0.135479,-0.0158448,-4.800802],"male_stroke":[0.7182761,0.0008864,-0.0220683,-0.2719759,0.319957,0.2728292,0.3426763,0.0,0.0,0.2907134,0.0186548,0.240036,-0.1218938,0.0042588,0.1412729,0.0275883,-0.0079987,-0.1121897,-0.1446989,-0.0580327,0.0,-0.1820914,0.0797728,0.3204988,0.1892707,0.1404936,0.0536898,0.0868309,0.1187536,-0.060318,-4.683048]},"base_30yr":{"female_total_cvd":[0.5503079,-0.0928369,0.0409794,-0.1663306,-0.1628654,0.3299505,0.6793894,0.3196112,0.0,0.0,0.1857101,0.0553528,0.2894,-0.075688,-0.056367,0.1071019,-0.0751438,0.0301786,-0.0998776,-0.3206166,-0.1607862,0.0,-0.1450788,-1.318827],"male_total_cvd":[0.4627309,-0.0984281,0.0836088,-0.1029824,-0.2140352,0.2904325,0.5331276,0.2141914,0.0,0.0,0.1155556,0.0603775,0.232714,-0.0272112,-0.0384488,0.134192,-0.0511759,0.0165865,-0.1101437,-0.2585943,-0.1566406,0.0,-0.1166776,-1.148204],"female_ascvd":[0.4669202,-0.0893118,0.1256901,-0.1542255,-0.0018093,0.322949,0.6296707,0.268292,0.0,0.0,0.100106,0.0499663,0.1875292,0.0152476,-0.0276123,0.0736147,-0.0521962,0.0316918,-0.1046101,-0.2727793,-0.1530907,0.0,-0.1299149,-1.974074],"male_ascvd":[0.3994099,-0.0937484,0.1744643,-0.120203,-0.0665117,0.2753037,0.4790257,0.1782635,0.0,0.0,-0.0218789,0.0602553,0.1421182,0.0135996,-0.0218265,0.1013148,-0.0312619,0.020673,-0.0920935,-0.2159947,-0.1548811,0.0,-0.0712547,-1.736444],"female_heart_failure":[0.6254374,-0.0983038,0.0,0.0,-0.3919241,0.3142295,0.8330787,0.3438651,0.0594874,0.2525536,0.2981642,0.0667159,0.333921,0.0,-0.0893177,0.0,0.0,0.0,-0.0974299,-0.404855,-0.1982991,-0.0035619,-0.1564215,-2.205379],"male_heart_failure":[0.5681541,-0.1048388,0.0,0.0,-0.4761564,0.30324,0.6840338,0.2656273,0.0833107,0.26999,0.2541805,0.0638923,0.2583631,0.0,-0.0391938,0.0,0.0,0.0,-0.1269124,-0.3273572,-0.2043019,-0.0182831,-0.1342618,-1.95751],"female_chd":[0.4912423,-0.0917078,0.1878256,-0.2035703,-0.0030222,0.3111757,0.6803247,0.3215313,0.0,0.0,0.1252615,0.0414579,0.1561303,0.0384138,-0.0795531,0.0635262,-0.0637665,0.0474074,-0.0876484,-0.2803099,-0.1513626,0.0,-0.1130454,-2.733866],"male_chd":[0.4171209,-0.0949994,0.2651913,-0.1879446,-0.0971746,0.258931,0.4956463,0.1728844,0.0,0.0,-0.0091955,0.0578155,0.0939196,0.0508921,-0.0486024,0.0669478,-0.0533361,0.0461425,-0.0812234,-0.216315,-0.1749197,0.0,-0.0241467,-2.376762],"female_stroke":[0.4366978,-0.0873673,0.0586334,-0.1069016,-0.0317106,0.3272741,0.5841726,0.2045681,0.0,0.0,0.0765812,0.0603226,0.2087816,-0.0095137,0.0014436,0.0720012,-0.0361779,0.015888,-0.1179062,-0.2710221,-0.1702836,0.0,-0.1320992,-2.62078],"male_stroke":[0.4003448,-0.0935927,0.0309419,-0.0280763,-0.047704,0.2925734,0.4236823,0.1675238,0.0,0.0,-0.0009216,0.0575221,0.1685514,-0.020829,0.0230042,0.1413652,0.0145411,-0.0149606,-0.1118468,-0.2152953,-0.1339295,0.0,-0.1225081,-2.458022]},"uacr_30yr":{"female_total_cvd":[0.5491768,-0.0937311,0.0359847,-0.1642965,-0.1483404,0.313353,0.6253766,0.3147172,0.0,0.0,0.1094663,0.0550705,0.2782433,-0.0786239,-0.0628947,0.093204,-0.0710685,0.0306363,-0.0951455,-0.3168231,-0.1636391,0.0,-0.1265483,0.1142251,-0.0055863,-1.583738],"male_total_cvd":[0.464491,-0.0998895,0.0757606,-0.1031778,-0.1990714,0.2715816,0.4754637,0.2069672,0.0,0.0,0.0331103,0.0540474,0.2189911,-0.0331044,-0.04534,0.1214535,-0.0483995,0.0178997,-0.1059324,-0.2492861,-0.1561543,0.0,-0.1012429,0.1007571,0.0572456,-1.398727],"female_ascvd":[0.4629669,-0.0902777,0.1215214,-0.1522069,0.0092679,0.3113609,0.581256,0.263167,0.0,0.0,0.0391726,0.0492959,0.1786178,0.0131058,-0.0325135,0.0617093,-0.0489189,0.0321079,-0.1003185,-0.2684574,-0.1547301,0.0,-0.1130703,0.0903471,-0.0145818,-2.178888],"male_ascvd":[0.3995607,-0.094557,0.1686692,-0.1202145,-0.0555561,0.2633566,0.4362036,0.1716233,0.0,0.0,-0.0775282,0.0561236,0.1319331,0.0102428,-0.0269294,0.0920557,-0.0297021,0.0217935,-0.0893347,-0.2081467,-0.1542716,0.0,-0.0597254,0.0684872,0.0193962,-1.873449],"female_heart_failure":[0.6319513,-0.1009284,0.0,0.0,-0.3787175,0.2863393,0.7631221,0.3355843,0.0677084,0.2517238,0.1940067,0.0664006,0.3171436,0.0,-0.0970661,0.0,0.0,0.0,-0.0896239,-0.400743,-0.2042041,-0.0054699,-0.13602,0.1486028,0.011608,-2.538952],"male_heart_failure":[0.5750236,-0.1062268,0.0,0.0,-0.4633994,0.2742874,0.612208,0.2614987,0.0895459,0.2632424,0.1430472,0.0535184,0.2417468,0.0,-0.0498574,0.0,0.0,0.0,-0.1193827,-0.316651,-0.2046122,-0.0216878,-0.1165637,0.1366452,0.1078355,-2.314872],"female_chd":[0.4898341,-0.0926865,0.1833508,-0.201611,0.0091108,0.2981863,0.6378172,0.3162011,0.0,0.0,0.0561023,0.0412012,0.1482267,0.0374798,-0.0857793,0.0509371,-0.0599687,0.0481562,-0.0829556,-0.2759708,-0.1535672,0.0,-0.0957183,0.0979522,0.0128614,-2.958872],"male_chd":[0.420671,-0.0959158,0.2588159,-0.1879718,-0.0865129,0.2477111,0.4587997,0.1677282,0.0,0.0,-0.0654866,0.0537308,0.0861796,0.0482722,-0.0537927,0.0580566,-0.0520054,0.047197,-0.0783965,-0.2085875,-0.1733514,0.0,-0.0129715,0.0609433,0.0324875,-2.505263],"female_stroke":[0.4354844,-0.0881545,0.0550003,-0.1048457,-0.0207028,0.3165286,0.530582,0.2019636,0.0,0.0,0.0218821,0.059055,0.1982863,-0.0133205,-0.0017964,0.0614446,-0.0331901,0.0162855,-0.1139342,-0.2664475,-0.1700553,0.0,-0.1177106,0.0806194,-0.0490149,-2.780053],"male_stroke":[0.4058962,-0.0942566,0.0258703,-0.0290019,-0.0374802,0.2801207,0.3729179,0.1649756,0.0,0.0,-0.0538202,0.0524689,0.15643,-0.0248041,0.0189905,0.1305961,0.016562,-0.0136888,-0.1080585,-0.2046359,-0.1311197,0.0,-0.1122139,0.0793756,0.0025522,-2.619781]},"hba1c_30yr":{"female_total_cvd":[0.5343493,-0.0952314,0.0298124,-0.1578451,-0.1504488,0.3173368,0.4314738,0.3209399,0.0,0.0,0.1771435,0.0582828,0.2888947,-0.0795886,-0.0600438,0.0920598,-0.0696108,0.0308807,-0.0954051,-0.2763408,-0.1623944,0.0,-0.1430514,0.0940543,0.1116486,-0.0024798,-1.341059],"male_total_cvd":[0.4519873,-0.101624,0.0700456,-0.0968005,-0.1923527,0.2827043,0.3417152,0.2105272,0.0,0.0,0.1113291,0.0640135,0.2334248,-0.0299421,-0.0393204,0.1228854,-0.0463737,0.0184599,-0.1085744,-0.2208049,-0.1577978,0.0,-0.1179375,0.0768169,0.0777295,0.0092204,-1.180767],"female_ascvd":[0.4555574,-0.0903501,0.1148321,-0.1458754,0.0089323,0.3139029,0.386281,0.2714309,0.0,0.0,0.0930987,0.0532216,0.1862181,0.0106964,-0.0329713,0.0583609,-0.0463273,0.0324717,-0.1004777,-0.2266944,-0.1541859,0.0,-0.1286005,0.0875827,0.1126417,0.0124356,-2.011533],"male_ascvd":[0.3883267,-0.0958114,0.1613374,-0.1144418,-0.0474338,0.2691281,0.2859773,0.1759553,0.0,0.0,-0.0242898,0.0644523,0.142874,0.0115062,-0.02333,0.0899664,-0.0275478,0.022573,-0.090802,-0.1771894,-0.1548847,0.0,-0.0732754,0.0591089,0.0821158,0.0179755,-1.777708],"female_heart_failure":[0.6210856,-0.1000972,0.0,0.0,-0.3773697,0.295316,0.5681692,0.3449139,0.0540094,0.249767,0.2875781,0.0692013,0.3334936,0.0,-0.0922339,0.0,0.0,0.0,-0.0907885,-0.3554646,-0.2008846,-0.0079611,-0.156803,0.1448336,0.1277838,-0.0022589,-2.193553],"male_heart_failure":[0.5703729,-0.1084544,0.0,0.0,-0.4471767,0.2910152,0.4507242,0.259585,0.0850676,0.2637222,0.2454706,0.0675649,0.2611991,0.0,-0.0408908,0.0,0.0,0.0,-0.1241051,-0.2849461,-0.2032308,-0.0239714,-0.138301,0.1101184,0.0949198,0.0084192,-1.974999],"female_chd":[0.4853187,-0.0929654,0.1733152,-0.1929452,0.0092228,0.298244,0.4210289,0.3254237,0.0,0.0,0.1183472,0.0462805,0.1565331,0.033512,-0.0866143,0.0468497,-0.0564555,0.0481034,-0.0819801,-0.2264933,-0.153584,0.0,-0.1122738,0.134395,0.1270458,0.0374905,-2.802642],"male_chd":[0.3944508,-0.0956857,0.2519365,-0.181881,-0.0829203,0.2534596,0.3298202,0.1773379,0.0,0.0,-0.0059506,0.0625623,0.0960268,0.0489115,-0.050231,0.0573554,-0.0498819,0.0479144,-0.0796665,-0.1822839,-0.1744951,0.0,-0.0259456,0.0695636,0.0707541,0.0491596,-2.48433],"female_stroke":[0.4296679,-0.0883118,0.0487321,-0.1001406,-0.0199947,0.3198382,0.3270964,0.2039542,0.0,0.0,0.0699052,0.062555,0.2080978,-0.0142009,-0.0029543,0.0574525,-0.0315382,0.0166448,-0.114502,-0.2298924,-0.170899,0.0,-0.1307433,0.0457624,0.1056467,-0.017081,-2.618396],"male_stroke":[0.397402,-0.0953425,0.0180202,-0.0242534,-0.0283414,0.2870641,0.1894407,0.1632278,0.0,0.0,-0.0027618,0.0605617,0.1700368,-0.0256155,0.0201099,0.1281684,0.0185524,-0.0127335,-0.1105848,-0.1744077,-0.1333941,0.0,-0.1254591,0.0500544,0.0917727,-0.0311993,-2.438154]},"full_30yr":{"female_total_cvd":[0.5073749,-0.0981751,0.0162303,-0.1617147,-0.1111241,0.282946,0.4004069,0.2918701,0.0,0.0,0.1017102,0.0622643,0.2872416,-0.0768135,-0.0557282,0.0917585,-0.0679131,0.029076,-0.0907755,-0.2702118,-0.1373216,0.0,-0.1255864,0.1067741,0.1853138,0.1567115,0.1028065,-0.0006181,0.0925285,0.0975598,0.0101713,-1.748475],"male_total_cvd":[0.4427595,-0.1064108,0.0629381,-0.1015427,-0.2542326,0.2549679,0.333835,0.1873833,0.0,0.0,0.0246102,0.0552014,0.1979729,-0.0407714,-0.0365522,0.1232822,-0.0441334,0.0177865,-0.1046657,-0.2116113,-0.1277905,0.0,-0.0955922,0.0256704,0.1887637,0.089241,0.0894596,0.0710124,0.0676202,0.063409,0.0038783,-1.504558],"female_ascvd":[0.4386739,-0.0921956,0.0977728,-0.1453525,0.0590925,0.2862862,0.3669136,0.2354695,0.0,0.0,0.0354338,0.0573093,0.1840085,0.0117504,-0.0331945,0.0664311,-0.0492826,0.0288888,-0.0964709,-0.2279648,-0.120405,0.0,-0.1157635,0.1107632,0.1840367,0.1308962,0.0810739,-0.0147785,0.0794709,0.1002615,0.017301,-2.314066],"male_ascvd":[0.3743566,-0.0995499,0.1544808,-0.1215297,-0.1083968,0.2555179,0.2696998,0.1628432,0.0,0.0,-0.077507,0.0583407,0.1120322,-0.0025063,-0.0256116,0.0886745,-0.0254507,0.0244639,-0.0869146,-0.165745,-0.1244714,0.0,-0.0624552,0.015675,0.1864231,0.0845697,0.0560171,0.0252244,0.0501422,0.0722905,0.0114945,-1.985368],"female_heart_failure":[0.5927507,-0.1028754,0.0,0.0,-0.3593781,0.2628556,0.5113472,0.347344,0.0564656,0.2363857,0.1971295,0.0735227,0.3219386,0.0,-0.0880321,0.0,0.0,0.0,-0.0863132,-0.3425359,-0.181405,0.0031285,-0.1356989,0.0847634,0.18397,0.1485802,0.1273306,0.0167008,0.1378342,0.1138832,0.0138979,-2.642208],"male_heart_failure":[0.5478829,-0.1111928,0.0,0.0,-0.4547346,0.2527602,0.4385384,0.2397952,0.0640931,0.2643081,0.1354588,0.0570689,0.220666,0.0,-0.0436769,0.0,0.0,0.0,-0.1168376,-0.2730055,-0.1573691,-0.0174998,-0.1128676,0.057746,0.2446441,0.1076782,0.1233486,0.1274796,0.0985062,0.0804844,0.0022806,-2.425439],"female_chd":[0.47488,-0.0950733,0.1472475,-0.1993519,0.085684,0.2781393,0.3939798,0.2832155,0.0,0.0,0.0585928,0.0452655,0.1634427,0.0242915,-0.0836302,0.0714966,-0.0586624,0.0469044,-0.0777709,-0.2216709,-0.1092446,0.0,-0.0992136,0.1325148,0.1837377,0.1285162,0.0827556,0.0116095,0.1200107,0.1162423,0.0378343,-3.099189],"male_chd":[0.3858298,-0.0994131,0.2479637,-0.1913328,-0.1837089,0.2417551,0.3599971,0.1581048,0.0,0.0,-0.0707959,0.054403,0.0539143,0.0214637,-0.0603516,0.0616356,-0.0517511,0.0506964,-0.0754965,-0.1773555,-0.1355626,0.0,-0.007771,0.0213662,0.1468633,0.0369637,0.0548478,0.0362993,0.0656365,0.0621508,0.0457156,-2.643083],"female_stroke":[0.4203891,-0.0903905,0.0383085,-0.0989622,0.0088016,0.2940083,0.323036,0.1925302,0.0,0.0,0.0206737,0.0672637,0.1935897,-0.0118966,-0.0056774,0.0598872,-0.0343871,0.013539,-0.1102987,-0.2305906,-0.1298535,0.0,-0.1172069,0.0734163,0.1614884,0.1096146,0.0726809,-0.0463426,0.0451134,0.0924872,-0.0068354,-2.858449],"male_stroke":[0.3762751,-0.0974722,0.005415,-0.0287694,-0.036424,0.2733756,0.1287781,0.1683627,0.0,0.0,-0.0386502,0.0596336,0.1833799,-0.0188846,0.0181289,0.1258208,0.0267826,-0.0116181,-0.1063796,-0.1519443,-0.1002027,0.0,-0.1214285,0.0329762,0.2360916,0.1347158,0.0599546,0.0124922,0.0353323,0.0804095,-0.0410015,-2.713952]}};
+
+const OUTCOMES = ['total_cvd','ascvd','heart_failure','chd','stroke'];
+const OUT_LABEL = {
+  total_cvd:'DCV Total',
+  ascvd:'ASCVD (Infarto/AVC)',
+  heart_failure:'Insuficiência Cardíaca',
+  chd:'Doença Coronariana',
+  stroke:'AVC'
+};
+const RANGES = {age:[30,79],total_c:[130,320],hdl_c:[20,100],sbp:[90,200],bmi:[18.5,39.9],egfr:[15,140],hba1c:[3,15],uacr:[0.1,25000]};
+
+const el = id => document.getElementById(id);
+let sex = null;
+
+// Theme Toggle Logic
+const themeBtn = el('themeToggleBtn');
+const themeIcon = el('themeIcon');
+const themeText = el('themeText');
+let currentTheme = localStorage.getItem('prevent_theme') || 'light';
+document.documentElement.setAttribute('data-theme', currentTheme);
+updateThemeUI();
+
+themeBtn.addEventListener('click', () => {
+  currentTheme = currentTheme === 'light' ? 'dark' : 'light';
+  document.documentElement.setAttribute('data-theme', currentTheme);
+  localStorage.setItem('prevent_theme', currentTheme);
+  updateThemeUI();
+});
+
+function updateThemeUI() {
+  if(currentTheme === 'dark') {
+    themeIcon.innerHTML = '<circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>';
+    themeText.textContent = 'Claro';
+  } else {
+    themeIcon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>';
+    themeText.textContent = 'Escuro';
+  }
+}
+
+// Reset Form
+el('resetBtn').addEventListener('click', () => {
+  ['age','total_c','hdl_c','sbp','bmi','egfr','cr','hba1c','uacr'].forEach(id => {
+    const inp = el(id);
+    if(inp) { inp.value = ''; inp.classList.remove('warn'); }
+  });
+  ['dm','smoking','bp_tx','statin'].forEach(id => {
+    el(id).checked = false;
+    el(id).closest('.toggle-card').classList.remove('active');
+  });
+  sex = null;
+  el('sex').querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', 'false'));
+  el('crBox').style.display = 'none';
+  compute();
+});
+
+// Sex segmented control
+el('sex').querySelectorAll('button').forEach(b => {
+  b.addEventListener('click', () => {
+    sex = b.dataset.v;
+    el('sex').querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b));
+    compute();
+  });
+});
+
+// Toggles styling + recompute
+['dm','smoking','bp_tx','statin'].forEach(id => {
+  el(id).addEventListener('change', e => {
+    e.target.closest('.toggle-card').classList.toggle('active', e.target.checked);
+    compute();
+  });
+});
+
+// Creatinine Box toggle
+el('egfrBtn').addEventListener('click', () => {
+  const box = el('crBox');
+  box.style.display = box.style.display === 'none' ? 'block' : 'none';
+});
+
+el('crApply').addEventListener('click', () => {
+  const cr = parseFloat(String(el('cr').value).replace(',','.')), age = parseFloat(String(el('age').value).replace(',','.'));
+  if(!(cr > 0) || !(age > 0) || !sex){ 
+    alert('Por favor, informe Idade, Sexo e Creatinina Sérica para o cálculo da TFG.'); 
+    return; 
+  }
+  const k = sex === 'female' ? 0.7 : 0.9, a1 = sex === 'female' ? -0.241 : -0.302, d = sex === 'female' ? 1.012 : 1;
+  const egfr = 142 * Math.pow(Math.min(cr/k, 1), a1) * Math.pow(Math.max(cr/k, 1), -1.2) * Math.pow(0.9938, age) * d;
+  el('egfr').value = Math.round(egfr);
+  el('crBox').style.display = 'none';
+  compute();
+});
+
+// Live compute on any input
+['age','total_c','hdl_c','sbp','bmi','egfr','hba1c','uacr'].forEach(id => el(id).addEventListener('input', compute));
+
+function clamp(id){
+  let raw = el(id).value;
+  if(raw == null) return {v: null, capped: false};
+  raw = String(raw).trim().replace(',', '.');
+  if(raw === '') { el(id).classList.remove('warn'); return {v: null, capped: false}; }
+  let v = parseFloat(raw);
+  if(isNaN(v)) return {v: null, capped: false};
+  const [lo, hi] = RANGES[id];
+  let capped = false;
+  if(v < lo){ v = lo; capped = true; } else if(v > hi){ v = hi; capped = true; }
+  el(id).classList.toggle('warn', capped);
+  return {v, capped};
+}
+
+function buildTerms(model, time, d){
+  const toMmol = x => x * 0.02586;
+  const ageC = (d.age - 55) / 10, ageSq = ageC * ageC;
+  const nonHdl = toMmol(d.total_c - d.hdl_c) - 3.5;
+  const hdl = (toMmol(d.hdl_c) - 1.3) / 0.3;
+  const sbpLt = (Math.min(d.sbp, 110) - 110) / 20, sbpGe = (Math.max(d.sbp, 110) - 130) / 20;
+  const bmiLt = (Math.min(d.bmi, 30) - 25) / 5, bmiGe = (Math.max(d.bmi, 30) - 30) / 5;
+  const egfrLt = (Math.min(d.egfr, 60) - 60) / -15, egfrGe = (Math.max(d.egfr, 60) - 90) / -15;
+  const dm = d.dm ? 1 : 0, sm = d.smoking ? 1 : 0, bp = d.bp_tx ? 1 : 0, st = d.statin ? 1 : 0;
+  const t = [ageC];
+  if(time === '30yr') t.push(ageSq);
+  t.push(nonHdl, hdl, sbpLt, sbpGe, dm, sm, bmiLt, bmiGe, egfrLt, egfrGe, bp, st,
+         bp*sbpGe, st*nonHdl, ageC*nonHdl, ageC*hdl, ageC*sbpGe, ageC*dm, ageC*sm, ageC*bmiGe, ageC*egfrLt);
+  if(model === 'full'){ t.push(0, 0, 1); }
+  if(model === 'uacr' || model === 'full'){
+    const ln = d.uacr != null ? Math.log(d.uacr) : 0;
+    t.push(ln, d.uacr != null ? 0 : 1);
+  }
+  if(model === 'hba1c' || model === 'full'){
+    const hdmv = (d.hba1c != null && dm === 1) ? d.hba1c - 5.3 : 0;
+    const hndv = (d.hba1c != null && dm === 0) ? d.hba1c - 5.3 : 0;
+    t.push(hdmv, hndv, d.hba1c != null ? 0 : 1);
+  }
+  t.push(1);
+  return t;
+}
+
+function riskFor(model, time, sex, outcome, d){
+  const betas = COEF[model + '_' + time][sex + '_' + outcome];
+  const terms = buildTerms(model, time, d);
+  let lo = 0; for(let i=0; i<betas.length; i++) lo += betas[i] * terms[i];
+  const p = Math.exp(lo) / (1 + Math.exp(lo));
+  return Math.floor(p * 1000 + 0.5 + 1e-8) / 1000;
+}
+
+function ascvdCategory(pct){
+  if(pct < 3) return {t: 'Baixo Risco', c: 'var(--r-low)', bg: 'var(--r-low-bg)'};
+  if(pct < 5) return {t: 'Risco Limítrofe', c: 'var(--r-bord)', bg: 'var(--r-bord-bg)'};
+  if(pct < 10) return {t: 'Risco Intermediário', c: 'var(--r-int)', bg: 'var(--r-int-bg)'};
+  return {t: 'Alto Risco', c: 'var(--r-high)', bg: 'var(--r-high-bg)'};
+}
+
+function barColor(pct){
+  if(pct < 3) return 'var(--r-low)';
+  if(pct < 5) return 'var(--r-bord)';
+  if(pct < 10) return 'var(--r-int)';
+  return 'var(--r-high)';
+}
+
+// Signature: draws the ASCVD risk trajectory (now → 10yr → 30yr) as a clinical trend line.
+function trajectorySVG(v10, v30, color){
+  const W = 132, H = 58, padX = 8, padTop = 9, padBot = 8, tMax = 30;
+  const yMax = Math.max(v30 == null ? v10 : v30, v10, 1) * 1.25;
+  const xf = t => padX + (t / tMax) * (W - 2 * padX);
+  const yf = v => (H - padBot) - (v / yMax) * (H - padTop - padBot);
+  const pts = [[0, 0], [10, v10]];
+  if(v30 != null) pts.push([30, v30]);
+  let line = 'M' + xf(pts[0][0]).toFixed(1) + ',' + yf(pts[0][1]).toFixed(1);
+  for(let i = 1; i < pts.length; i++) line += ' L' + xf(pts[i][0]).toFixed(1) + ',' + yf(pts[i][1]).toFixed(1);
+  const last = pts[pts.length - 1];
+  const area = line + ' L' + xf(last[0]).toFixed(1) + ',' + (H - padBot) + ' L' + xf(0).toFixed(1) + ',' + (H - padBot) + ' Z';
+  let dots = `<circle cx="${xf(10).toFixed(1)}" cy="${yf(v10).toFixed(1)}" r="4.5" fill="var(--surface-card)" stroke="${color}" stroke-width="2.5"/>`;
+  if(v30 != null) dots += `<circle cx="${xf(30).toFixed(1)}" cy="${yf(v30).toFixed(1)}" r="3.4" fill="${color}" fill-opacity="0.55"/>`;
+  return `<svg viewBox="0 0 ${W} ${H}" fill="none" role="img" aria-label="Trajetória de risco de agora até 30 anos">
+    <defs><linearGradient id="trajGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="${color}" stop-opacity="0.26"/>
+      <stop offset="100%" stop-color="${color}" stop-opacity="0"/>
+    </linearGradient></defs>
+    <path d="${area}" fill="url(#trajGrad)"/>
+    <path class="traj-line" d="${line}" stroke="${color}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+    ${dots}
+  </svg>`;
+}
+
+function animateNumber(element, finalValue, duration = 400) {
+  const startValue = parseFloat(element.getAttribute('data-val')) || 0;
+  if(startValue === finalValue) {
+    element.textContent = finalValue.toFixed(1) + '%';
+    return;
+  }
+  element.setAttribute('data-val', finalValue);
+  const startTime = performance.now();
+  
+  function update(currentTime) {
+    const elapsed = currentTime - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    const current = startValue + (finalValue - startValue) * (1 - Math.pow(1 - progress, 3));
+    element.textContent = current.toFixed(1) + '%';
+    if(progress < 1) requestAnimationFrame(update);
+  }
+  requestAnimationFrame(update);
+}
+
+function compute(){
+  const vals = {}, caps = [];
+  for(const id of ['age','total_c','hdl_c','sbp','bmi','egfr','hba1c','uacr']){
+    const r = clamp(id); vals[id] = r.v; if(r.capped) caps.push(id);
+  }
+  vals.dm = el('dm').checked; vals.smoking = el('smoking').checked;
+  vals.bp_tx = el('bp_tx').checked; vals.statin = el('statin').checked;
+
+  const required = ['age','total_c','hdl_c','sbp','bmi','egfr'];
+  const ready = sex && required.every(k => vals[k] != null);
+  const body = el('resBody');
+
+  if(!ready){
+    el('modelTag').innerHTML = 'modelo: <b>—</b>';
+    const LBL = {age:'Idade',total_c:'Colesterol Total',hdl_c:'HDL',sbp:'PA Sistólica',bmi:'IMC',egfr:'TFG'};
+    const missing = [];
+    if(!sex) missing.push('Sexo');
+    required.forEach(k => { if(vals[k] == null) missing.push(LBL[k]); });
+    body.innerHTML = `
+      <div class="empty-state">
+        <div class="icon-circle" style="border-color: var(--r-bord); color: var(--r-bord);">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </div>
+        <div>
+          <h3 style="font-weight: 700; color: var(--text-main); margin-bottom: 6px;">Faltam Parâmetros</h3>
+          <p style="color: var(--text-muted); font-size: 13.5px;">Para realizar a estimativa precisa, preencha: <b style="color: var(--text-secondary);">${missing.join(', ')}</b>.</p>
+        </div>
+      </div>`;
+    return;
+  }
+
+  const hasH = vals.hba1c != null, hasU = vals.uacr != null;
+  let model = 'base';
+  if(hasH && hasU) model = 'full'; else if(hasU) model = 'uacr'; else if(hasH) model = 'hba1c';
+  const MODEL_LABEL = {base:'Base', uacr:'+ RAC Urinária', hba1c:'+ HbA1c', full:'+ HbA1c + RAC'};
+  el('modelTag').innerHTML = 'modelo: <b>' + MODEL_LABEL[model] + '</b>';
+
+  const age = vals.age;
+  const r10 = {}, r30 = {};
+  OUTCOMES.forEach(o => { r10[o] = riskFor(model, '10yr', sex, o, vals); });
+  const show30 = age <= 59;
+  if(show30) OUTCOMES.forEach(o => { r30[o] = riskFor(model, '30yr', sex, o, vals); });
+
+  const p = r10.ascvd * 100;
+  const p30 = show30 ? r30.ascvd * 100 : null;
+  const cat = ascvdCategory(p);
+  const barW = Math.min(p / 30 * 100, 100);
+
+  let html = '';
+  if(caps.length){
+    const LBL_CAP = {age:'Idade',total_c:'Colesterol Total',hdl_c:'HDL',sbp:'PA Sistólica',bmi:'IMC',egfr:'TFG',hba1c:'HbA1c',uacr:'RAC Urinária'};
+    html += `
+      <div class="warnbox">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="flex-shrink:0; margin-top:2px;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <div><b>Aviso de Limite Clínico:</b> Parâmetro(s) fora da faixa validada foram limitados ao extremo mais próximo para cálculo: <b>${caps.map(c => LBL_CAP[c]).join(', ')}</b>.</div>
+      </div>`;
+  }
+
+  html += `
+    <div class="hero-readout">
+      <div class="hero-label-row">
+        <span class="hero-label">Risco ASCVD &middot; Trajetória</span>
+        <span class="risk-pill" style="background: ${cat.bg}; color: ${cat.c};">
+          <span class="dot" style="background: ${cat.c};"></span>
+          ${cat.t}
+        </span>
+      </div>
+
+      <div class="horizon-readout">
+        <div class="horizon primary">
+          <div class="horizon-num" id="heroValNum" style="color: ${cat.c};" data-val="${p}">${p.toFixed(1)}%</div>
+          <div class="horizon-lbl">em <b>10 anos</b></div>
+        </div>
+        <div class="traj-wrap">
+          ${trajectorySVG(p, p30, cat.c)}
+          <div class="traj-axis"><span>agora</span><span>30 anos</span></div>
+        </div>
+        <div class="horizon secondary ${show30 ? '' : 'na'}">
+          <div class="horizon-num">${show30 ? p30.toFixed(1) + '%' : '—'}</div>
+          <div class="horizon-lbl">${show30 ? 'em <b>30 anos</b>' : '30 anos <small>(fora da faixa)</small>'}</div>
+        </div>
+      </div>
+
+      <div class="gauge-container">
+        <div class="gauge-track">
+          <div class="gauge-marker" style="left: ${barW}%; border-color: ${cat.c};"></div>
+        </div>
+        <div class="gauge-labels">
+          <span>0%</span>
+          <span>3%</span>
+          <span>5%</span>
+          <span>10%</span>
+          <span>&ge;30%</span>
+        </div>
+        <div class="gauge-caption">Categorias ASCVD em 10 anos conforme a página oficial atual da AHA</div>
+      </div>
+    </div>
+
+    <div class="outcomes-section">
+      <div class="outcomes-title">
+        <span>Detalhamento de Desfechos Clínicos</span>
+        <span style="font-size: 11.5px; font-weight: 500; color: var(--text-muted);">10 anos vs 30 anos</span>
+      </div>
+      
+      <div class="outcomes-grid">`;
+
+  const rows = [['total_cvd',true], ['ascvd',true], ['heart_failure',false], ['chd',false], ['stroke',false]];
+  rows.forEach(([o, prim]) => {
+    const v10 = (r10[o] * 100).toFixed(1);
+    const v30 = show30 ? (r30[o] * 100).toFixed(1) : null;
+    const col10 = barColor(parseFloat(v10));
+    const w10 = Math.min(parseFloat(v10) / 30 * 100, 100);
+
+    html += `
+        <div class="outcome-card ${prim ? 'primary-card' : ''}">
+          <div class="outcome-header">
+            <span class="outcome-name">
+              ${prim ? '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--accent-dark)" stroke-width="2.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>' : ''}
+              ${OUT_LABEL[o]}
+            </span>
+            <div class="outcome-values">
+              <div class="val-box">
+                <span class="time-lbl">10 Anos</span>
+                <span class="time-val" style="color: ${col10};">${v10}%</span>
+              </div>
+              <div class="val-box ${!show30 ? 'dim' : ''}">
+                <span class="time-lbl">30 Anos</span>
+                <span class="time-val">${show30 ? v30 + '%' : '—'}</span>
+              </div>
+            </div>
+          </div>
+          <div class="outcome-bar-bg">
+            <div class="outcome-bar-fill" style="width: ${w10}%; background: ${col10};"></div>
+          </div>
+        </div>`;
+  });
+
+  html += `
+      </div>
+    </div>`;
+
+  body.innerHTML = html;
+  
+  const heroEl = el('heroValNum');
+  if(heroEl) animateNumber(heroEl, p);
+
+  // Bind EHR Copy
+  const copyBtn = el('copyEhrBtn');
+  if(copyBtn) {
+    copyBtn.addEventListener('click', () => {
+      const summaryText = `[PREVENT™ AHA] Paciente ${sex === 'male' ? 'Masc' : 'Fem'}, ${vals.age} anos | IMC: ${vals.bmi} kg/m² | PA: ${vals.sbp} mmHg | TFG: ${vals.egfr} mL/min | Colesterol: CT ${vals.total_c} / HDL ${vals.hdl_c} mg/dL | Fatores: ${vals.dm ? 'DM, ' : ''}${vals.smoking ? 'Tabagismo, ' : ''}${vals.bp_tx ? 'Anti-hipertensivo, ' : ''}${vals.statin ? 'Estatina' : 'Sem medicações cardiovasculares'}
+▶ RISCO ASCVD (10 ANOS): ${(r10.ascvd*100).toFixed(1)}% (${cat.t})
+▶ DCV Total (10 anos): ${(r10.total_cvd*100).toFixed(1)}% | Insuf. Cardíaca: ${(r10.heart_failure*100).toFixed(1)}% | Coronariana: ${(r10.chd*100).toFixed(1)}% | AVC: ${(r10.stroke*100).toFixed(1)}%`;
+      navigator.clipboard.writeText(summaryText).then(() => {
+        showToast('Resumo clínico copiado para o Prontuário!');
+      });
+    });
+  }
+
+  // Bind Print
+  const printBtn = el('printBtn');
+  if(printBtn) {
+    printBtn.addEventListener('click', () => window.print());
+  }
+}
+
+function showToast(msg) {
+  const toast = el('toast');
+  el('toastMsg').textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 3500);
+}
+</script>
+</body>
+</html>

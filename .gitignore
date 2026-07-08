@@ -1,0 +1,11 @@
+# Logs
+*.log
+firebase-debug.log
+
+# Ferramentas / temporários de sessão
+.playwright-mcp/
+.playwright-cli/
+.claude/
+
+# macOS
+.DS_Store
