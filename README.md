@@ -12,7 +12,7 @@ Calculadora de risco cardiovascular baseada nas equações **PREVENT™** (Predi
 
 ## ✨ Recursos
 
-- **Risco em 10 e 30 anos** para 5 desfechos: **DCV total, ASCVD, Insuficiência Cardíaca, Doença Coronariana e AVC**
+- **Risco em 10 e 30 anos** para os 3 desfechos exibidos pela calculadora oficial da AHA: **DCV total, ASCVD e Insuficiência Cardíaca**
 - **4 modelos**, selecionados automaticamente conforme os dados disponíveis:
   - Base
   - + RAC urinária (UACR)
@@ -44,7 +44,7 @@ A calculadora foi verificada de forma exaustiva contra a **calculadora oficial d
 - **~20.000 comparações** contra o motor de cálculo oficial da AHA (o mesmo que alimenta o site `professional.heart.org`) — **zero divergências**
 - **Enumeração 100% completa** das combinações discretas (sexo × diabetes × tabagismo × anti-hipertensivo × estatina × modelo)
 - **Varredura densa** de cada variável contínua em toda a faixa válida — diferença máxima **0,0000**
-- **Coeficientes conferidos bit a bit** contra o material suplementar do artigo (2.140 coeficientes, incluindo DAC e AVC)
+- **Coeficientes conferidos bit a bit** contra o material suplementar do artigo
 - Conversor **CKD-EPI 2021** validado ponta a ponta
 
 ### Rodar a validação você mesmo

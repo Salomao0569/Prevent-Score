@@ -37,9 +37,8 @@ Código de saída **0** = tudo idêntico · **1** = houve divergência.
   (`professional.heart.org/aha-service/PHDSearch/PreventCalculate`) e compara os desfechos
   DCV, ASCVD e Insuficiência Cardíaca em 10 e 30 anos.
 
-> Observação: o backend oficial retorna apenas DCV, ASCVD e IC. Os desfechos **Doença
-> Coronariana e AVC** exibidos no app usam os mesmos coeficientes publicados (conferidos
-> contra o suplemento do artigo), mas não são comparáveis por esta rota.
+> Observação: o app exibe exatamente os mesmos 3 desfechos da calculadora oficial da AHA
+> (DCV, ASCVD e IC), que são os retornados por este backend.
 
 ## Conferir coeficientes contra a fonte canônica (avançado)
 
